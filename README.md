@@ -39,6 +39,15 @@ API untuk manajemen keuangan pribadi menggunakan FastAPI.
    DEBUG=true
    ```
 
+6. Setup database:
+   ```bash
+   # Buat database PostgreSQL
+   createdb finance_db
+   
+   # Jalankan migration untuk membuat tabel
+   python -m app.core.init_db
+   ```
+
 ## Menjalankan Aplikasi
 
 ### Cara 1: Menggunakan file run.py (Direkomendasikan)
@@ -51,31 +60,55 @@ python run.py
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Cara 3: Menggunakan script
-- Windows: `run.bat`
-- Linux/Mac: `./run.sh`
+## Database Migration
 
-## Konfigurasi Host dan Port
+### Inisialisasi Database
+Script `python -m app.core.init_db` akan:
+- Membuat tabel `user` untuk menyimpan data pengguna
+- Membuat tabel `budget_category` untuk kategori budget
+- Membuat tabel `transaction` untuk transaksi keuangan
+- Menggunakan `checkfirst=True` untuk mencegah error jika tabel sudah ada
 
-Untuk menjalankan aplikasi di `0.0.0.0` (bisa diakses dari jaringan lain):
+### Struktur Tabel
 
-### Menggunakan Environment Variables:
+#### Tabel User
+- `user_id` - Primary key
+- `email` - Email pengguna (unique)
+- `username` - Username (unique)
+- `hashed_password` - Password yang di-hash
+- `full_name` - Nama lengkap
+- `is_active` - Status aktif (1=aktif, 0=nonaktif)
+- `is_verified` - Status verifikasi email
+- `created_at` - Waktu pembuatan
+- `updated_at` - Waktu update terakhir
+- `deleted_at` - Soft delete timestamp
+
+#### Tabel BudgetCategory
+- `category_id` - Primary key
+- `user_id` - Foreign key ke user
+- `name` - Nama kategori
+- `description` - Deskripsi kategori
+- `budget_limit` - Limit budget
+- `created_at` - Waktu pembuatan
+- `updated_at` - Waktu update terakhir
+
+#### Tabel Transaction
+- `transaction_id` - Primary key
+- `user_id` - Foreign key ke user
+- `category_id` - Foreign key ke budget_category
+- `amount` - Jumlah transaksi
+- `description` - Deskripsi transaksi
+- `transaction_type` - Tipe transaksi (income/expense)
+- `transaction_date` - Tanggal transaksi
+- `created_at` - Waktu pembuatan
+- `updated_at` - Waktu update terakhir
+
+### Reset Database (Development)
 ```bash
-export HOST=0.0.0.0
-export PORT=8000
-python run.py
-```
-
-### Menggunakan uvicorn langsung:
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-### Di Windows:
-```cmd
-set HOST=0.0.0.0
-set PORT=8000
-python run.py
+# Hapus dan buat ulang database
+dropdb finance_db
+createdb finance_db
+python -m app.core.init_db
 ```
 
 ## Akses API
@@ -140,27 +173,20 @@ isort app/
 flake8 app/
 ```
 
-## Production Deployment
-
-Untuk production, gunakan gunicorn:
-
-```bash
-gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
-```
-
 ## Troubleshooting
-
-### Aplikasi tidak bisa diakses dari jaringan lain
-1. Pastikan menggunakan `--host 0.0.0.0`
-2. Periksa firewall settings
-3. Pastikan port tidak diblokir
 
 ### Database connection error
 1. Periksa `DATABASE_URL` di file `.env`
 2. Pastikan PostgreSQL berjalan
 3. Periksa credentials database
+4. Jalankan `python -m app.core.init_db` untuk membuat tabel
 
 ### Redis connection error
 1. Periksa `REDIS_URL` di file `.env`
 2. Pastikan Redis berjalan
-3. Aplikasi akan tetap berjalan tanpa Redis (cache akan disabled) 
+3. Aplikasi akan tetap berjalan tanpa Redis (cache akan disabled)
+
+### Authentication error
+1. Pastikan user sudah register
+2. Gunakan endpoint `/auth/login` untuk dapat token
+3. Sertakan header `Authorization: Bearer YOUR_TOKEN` untuk endpoint yang memerlukan auth 

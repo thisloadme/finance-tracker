@@ -4,16 +4,19 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token, get_password_hash
-from app.crud.user import create_user, authenticate_user, get_user_by_email
+from app.crud.user import create_user, authenticate_user, get_user_by_email, create_token_reset_password, claim_token_reset_password, update_user
 from app.schemas.auth import Token, LoginRequest, RefreshTokenRequest, PasswordResetRequest, PasswordResetConfirm
-from app.schemas.user import UserCreate, User
+from app.schemas.user import UserCreate, User, UserUpdate
 from app.core.deps import get_current_active_user
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
 @router.post("/register", response_model=User)
 def register(user: UserCreate, db: Session = Depends(get_db)):
-    # Check if user already exists
     db_user = get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(
@@ -21,7 +24,6 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered"
         )
     
-    # Create new user
     return create_user(db=db, user=user)
 
 @router.post("/login", response_model=Token)
@@ -85,22 +87,33 @@ def refresh_token(refresh_data: RefreshTokenRequest, db: Session = Depends(get_d
 
 @router.post("/password-reset-request")
 def request_password_reset(reset_request: PasswordResetRequest, db: Session = Depends(get_db)):
-    # In a real application, you would send an email with reset link
-    # For now, just return success message
     user = get_user_by_email(db, email=reset_request.email)
     if user:
-        # TODO: Send email with reset token
-        return {"message": "If email exists, password reset instructions have been sent"}
+        token = create_token_reset_password(db, user.user_id)
+        return {
+            "reset_token": token,
+            "message": "User found"
+        }
     
-    # Don't reveal if email exists or not for security
-    return {"message": "If email exists, password reset instructions have been sent"}
+    return {"reset_token": None, "message": "User not found"}
 
 @router.post("/password-reset-confirm")
 def confirm_password_reset(reset_confirm: PasswordResetConfirm, db: Session = Depends(get_db)):
-    # In a real application, you would verify the reset token
-    # For now, just return success message
-    # TODO: Implement token verification and password update
-    return {"message": "Password has been reset successfully"}
+    user = claim_token_reset_password(db, reset_confirm.token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
+    
+    updated_user = update_user(db, user.user_id, UserUpdate(password=reset_confirm.new_password))
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to reset password"
+        )
+    
+    return {"message": "Password has been reset successfully", "user": updated_user}
 
 @router.get("/me", response_model=User)
 def read_users_me(current_user = Depends(get_current_active_user)):

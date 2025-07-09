@@ -4,6 +4,7 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     email: EmailStr
+    role: str
     username: str
     full_name: Optional[str] = None
 
@@ -21,9 +22,11 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     full_name: Optional[str] = None
     password: Optional[str] = None
+    token_reset_password: Optional[str] = None
 
 class UserInDB(UserBase):
     user_id: int
+    role: str
     is_active: int
     is_verified: int
     created_at: datetime
