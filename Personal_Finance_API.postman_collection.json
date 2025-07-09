@@ -1,0 +1,774 @@
+{
+	"info": {
+		"_postman_id": "personal-finance-api-collection",
+		"name": "Personal Finance API",
+		"description": "API untuk manajemen keuangan pribadi dengan fitur user management, budget, dan transaksi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Root Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Root endpoint untuk mengecek apakah API berjalan"
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Health check endpoint"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengecek status API"
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"username\": \"testuser\",\n  \"full_name\": \"Test User\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Mendaftarkan user baru"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login user dan mendapatkan access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh_token\": \"your_refresh_token_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh access token menggunakan refresh token"
+					},
+					"response": []
+				},
+				{
+					"name": "Request Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/password-reset-request",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"password-reset-request"
+							]
+						},
+						"description": "Request password reset"
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"reset_token_here\",\n  \"new_password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/password-reset-confirm",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"password-reset-confirm"
+							]
+						},
+						"description": "Confirm password reset dengan token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Mendapatkan informasi user yang sedang login"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk autentikasi dan manajemen user"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						},
+						"description": "Mendapatkan informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newemail@example.com\",\n  \"username\": \"newusername\",\n  \"full_name\": \"New Full Name\",\n  \"password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						},
+						"description": "Update informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Current User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						},
+						"description": "Hapus akun user yang sedang login"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk manajemen user"
+		},
+		{
+			"name": "Budget Categories",
+			"item": [
+				{
+					"name": "Get All Budget Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories?skip=0&limit=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "0",
+									"description": "Number of records to skip"
+								},
+								{
+									"key": "limit",
+									"value": "100",
+									"description": "Maximum number of records to return"
+								}
+							]
+						},
+						"description": "Mendapatkan semua kategori budget user"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Budget Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Makanan\",\n  \"description\": \"Pengeluaran untuk makanan sehari-hari\",\n  \"monthly_limit\": 1000000,\n  \"color\": \"#FF6B6B\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories"
+							]
+						},
+						"description": "Membuat kategori budget baru"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Budget Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories",
+								"1"
+							]
+						},
+						"description": "Mendapatkan kategori budget berdasarkan ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Budget Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Makanan & Minuman\",\n  \"description\": \"Pengeluaran untuk makanan dan minuman\",\n  \"monthly_limit\": 1200000,\n  \"color\": \"#4ECDC4\",\n  \"is_active\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories",
+								"1"
+							]
+						},
+						"description": "Update kategori budget"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Budget Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories",
+								"1"
+							]
+						},
+						"description": "Hapus kategori budget"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Budget Category Usage",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/budget-categories/1/usage?month=12&year=2024",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"budget-categories",
+								"1",
+								"usage"
+							],
+							"query": [
+								{
+									"key": "month",
+									"value": "12",
+									"description": "Month (1-12)"
+								},
+								{
+									"key": "year",
+									"value": "2024",
+									"description": "Year (2020+)"
+								}
+							]
+						},
+						"description": "Mendapatkan penggunaan budget kategori untuk bulan tertentu"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk manajemen kategori budget"
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions?skip=0&limit=100&category_id=1&transaction_type=expense&start_date=2024-01-01&end_date=2024-12-31&search=makan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "0",
+									"description": "Number of records to skip"
+								},
+								{
+									"key": "limit",
+									"value": "100",
+									"description": "Maximum number of records to return"
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"description": "Filter by category ID (optional)"
+								},
+								{
+									"key": "transaction_type",
+									"value": "expense",
+									"description": "Filter by transaction type: income or expense (optional)"
+								},
+								{
+									"key": "start_date",
+									"value": "2024-01-01",
+									"description": "Filter by start date (YYYY-MM-DD) (optional)"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-31",
+									"description": "Filter by end date (YYYY-MM-DD) (optional)"
+								},
+								{
+									"key": "search",
+									"value": "makan",
+									"description": "Search in description (optional)"
+								}
+							]
+						},
+						"description": "Mendapatkan semua transaksi user dengan berbagai filter"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"expense\",\n  \"amount\": 50000,\n  \"description\": \"Makan siang di warung\",\n  \"date\": \"2024-12-15T12:30:00Z\",\n  \"category_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions"
+							]
+						},
+						"description": "Membuat transaksi baru"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"1"
+							]
+						},
+						"description": "Mendapatkan transaksi berdasarkan ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Transaction",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"expense\",\n  \"amount\": 75000,\n  \"description\": \"Makan siang di restoran\",\n  \"date\": \"2024-12-15T12:30:00Z\",\n  \"category_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"1"
+							]
+						},
+						"description": "Update transaksi"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Transaction",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"1"
+							]
+						},
+						"description": "Hapus transaksi"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Monthly Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transactions/summary/monthly?month=12&year=2024",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"summary",
+								"monthly"
+							],
+							"query": [
+								{
+									"key": "month",
+									"value": "12",
+									"description": "Month (1-12)"
+								},
+								{
+									"key": "year",
+									"value": "2024",
+									"description": "Year (2020+)"
+								}
+							]
+						},
+						"description": "Mendapatkan ringkasan transaksi bulanan (income, expense, balance)"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk manajemen transaksi"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "your_access_token_here",
+			"type": "string"
+		}
+	]
+} 
