@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "personal-finance-api-collection",
+		"_postman_id": "92aa90ed-9772-4d0c-8969-f3cc9b393913",
 		"name": "Personal Finance API",
 		"description": "API untuk manajemen keuangan pribadi dengan fitur user management, budget, dan transaksi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "12345678"
+		"_exporter_id": "5677120"
 	},
 	"item": [
 		{
@@ -64,7 +64,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"user@example.com\",\n  \"username\": \"testuser\",\n  \"full_name\": \"Test User\",\n  \"password\": \"password123\"\n}"
+							"raw": "{\n  \"email\": \"personal@example.com\",\n  \"username\": \"personal\",\n  \"role\": \"personal\",\n  \"full_name\": \"Dion Budi Personal\",\n  \"password\": \"password123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/register",
@@ -92,7 +92,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+							"raw": "{\n  \"username\": \"personal\",\n  \"password\": \"password123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -120,7 +120,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"refresh_token\": \"your_refresh_token_here\"\n}"
+							"raw": "{\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZXJzb25hbCIsImV4cCI6MTc1Mjc1NTQ4Mn0.3pk0ZV7zba2HoO-HFXx65CAR3IH9Z-6Kj_d1eocEBEQ\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/refresh",
@@ -223,6 +223,150 @@
 			"name": "Users",
 			"item": [
 				{
+					"name": "Get All User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						},
+						"description": "Mendapatkan informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"1"
+							]
+						},
+						"description": "Mendapatkan informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Insert User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newemail@example.com\",\n  \"username\": \"newusername\",\n  \"role\": \"admin\",\n  \"full_name\": \"New Full Name\",\n  \"password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user"
+							]
+						},
+						"description": "Update informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newemail@example.com\",\n  \"username\": \"newusername\",\n  \"full_name\": \"New Full Name\",\n  \"password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"1"
+							]
+						},
+						"description": "Update informasi user yang sedang login"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"1"
+							]
+						},
+						"description": "Hapus akun user yang sedang login"
+					},
+					"response": []
+				},
+				{
 					"name": "Get Current User",
 					"request": {
 						"method": "GET",
@@ -279,32 +423,6 @@
 							]
 						},
 						"description": "Update informasi user yang sedang login"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Current User",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{access_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/v1/users/me",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"users",
-								"me"
-							]
-						},
-						"description": "Hapus akun user yang sedang login"
 					},
 					"response": []
 				}
@@ -367,17 +485,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Makanan\",\n  \"description\": \"Pengeluaran untuk makanan sehari-hari\",\n  \"monthly_limit\": 1000000,\n  \"color\": \"#FF6B6B\"\n}"
+							"raw": "{\n  \"name\": \"Transport\",\n  \"description\": \"Transportasi umum dan bensin\",\n  \"monthly_limit\": 2000000\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/budget-categories",
+							"raw": "{{base_url}}/api/v1/budget-category",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"budget-categories"
+								"budget-category"
 							]
 						},
 						"description": "Membuat kategori budget baru"
@@ -395,15 +513,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/budget-categories/1",
+							"raw": "{{base_url}}/api/v1/budget-category/3",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"budget-categories",
-								"1"
+								"budget-category",
+								"3"
 							]
 						},
 						"description": "Mendapatkan kategori budget berdasarkan ID"
@@ -426,18 +544,18 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Makanan & Minuman\",\n  \"description\": \"Pengeluaran untuk makanan dan minuman\",\n  \"monthly_limit\": 1200000,\n  \"color\": \"#4ECDC4\",\n  \"is_active\": 1\n}"
+							"raw": "{\n  \"name\": \"Transportasi\",\n  \"description\": \"Pengeluaran untuk transportasi dan bensin\",\n  \"monthly_limit\": 2300000,\n  \"is_active\": 1\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/budget-categories/1",
+							"raw": "{{base_url}}/api/v1/budget-category/4",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"budget-categories",
-								"1"
+								"budget-category",
+								"4"
 							]
 						},
 						"description": "Update kategori budget"
@@ -481,14 +599,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/budget-categories/1/usage?month=12&year=2024",
+							"raw": "{{base_url}}/api/v1/budget-category/1/usage?month=12&year=2024",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"budget-categories",
+								"budget-category",
 								"1",
 								"usage"
 							],
@@ -593,17 +711,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"type\": \"expense\",\n  \"amount\": 50000,\n  \"description\": \"Makan siang di warung\",\n  \"date\": \"2024-12-15T12:30:00Z\",\n  \"category_id\": 1\n}"
+							"raw": "{\n  \"type\": \"income\",\n  \"amount\": 10000,\n  \"description\": \"Makan malam\",\n  \"date\": \"2024-12-15T12:30:00Z\",\n  \"category_id\": 1\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/transactions",
+							"raw": "{{base_url}}/api/v1/transaction",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"transactions"
+								"transaction"
 							]
 						},
 						"description": "Membuat transaksi baru"
@@ -767,8 +885,8 @@
 		},
 		{
 			"key": "access_token",
-			"value": "your_access_token_here",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZXJzb25hbCIsImV4cCI6MTc1MjE1MjQ4Mn0.2Tm2XUDeualjEH0fKsEKC6O-UO_jCdHWPBNsy_d8jg0",
 			"type": "string"
 		}
 	]
-} 
+}
