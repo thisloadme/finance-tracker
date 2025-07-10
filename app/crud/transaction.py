@@ -60,7 +60,6 @@ def validate_category_exists(db: Session, category_id: int, user_id: int) -> boo
     return category is not None
 
 def create_transaction(db: Session, transaction: TransactionCreate, user_id: int) -> Transaction:
-    # Validate category exists
     if not validate_category_exists(db, transaction.category_id, user_id):
         raise ValueError("Category does not exist or does not belong to user")
     
@@ -85,13 +84,12 @@ def update_transaction(db: Session, transaction_id: int, user_id: int, transacti
     if not db_transaction:
         return None
     
-    # Validate category exists if updating
     if transaction_update.category_id is not None:
         if not validate_category_exists(db, transaction_update.category_id, user_id):
             raise ValueError("Category does not exist or does not belong to user")
     
     def _update():
-        update_data = transaction_update.dict(exclude_unset=True)
+        update_data = transaction_update.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(db_transaction, field, value)
         
@@ -114,7 +112,6 @@ def delete_transaction(db: Session, transaction_id: int, user_id: int) -> bool:
     return execute_with_retry(_delete)
 
 def get_transaction_summary(db: Session, user_id: int, month: int, year: int) -> dict:
-    # Get total income and expenses for the specified month
     income_result = db.query(func.sum(Transaction.amount)).filter(
         and_(
             Transaction.user_id == user_id,

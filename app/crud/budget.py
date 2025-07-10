@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.budget import BudgetCategory
 from app.schemas.budget import BudgetCategoryCreate, BudgetCategoryUpdate
 from typing import List, Optional
+from decimal import Decimal
 
 def get_budget_category(db: Session, category_id: int, user_id: int) -> Optional[BudgetCategory]:
     return db.query(BudgetCategory).filter(
@@ -16,7 +17,7 @@ def get_budget_categories(db: Session, user_id: int, skip: int = 0, limit: int =
 
 def create_budget_category(db: Session, category: BudgetCategoryCreate, user_id: int) -> BudgetCategory:
     db_category = BudgetCategory(
-        **category.dict(),
+        **category.model_dump(),
         user_id=user_id
     )
     db.add(db_category)
@@ -29,7 +30,7 @@ def update_budget_category(db: Session, category_id: int, user_id: int, category
     if not db_category:
         return None
     
-    update_data = category_update.dict(exclude_unset=True)
+    update_data = category_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_category, field, value)
     
@@ -50,13 +51,24 @@ def get_budget_usage(db: Session, category_id: int, user_id: int, month: int, ye
     from app.models.transaction import Transaction, TransactionType
     from sqlalchemy import func
     
-    # Get total expenses for this category in the specified month
-    total = db.query(func.sum(Transaction.amount)).filter(
+    total_expenses = db.query(func.sum(Transaction.amount)).filter(
         Transaction.category_id == category_id,
         Transaction.user_id == user_id,
         Transaction.type == TransactionType.EXPENSE,
         func.extract('month', Transaction.date) == month,
         func.extract('year', Transaction.date) == year
     ).scalar()
+
+    total_income = db.query(func.sum(Transaction.amount)).filter(
+        Transaction.category_id == category_id,
+        Transaction.user_id == user_id,
+        Transaction.type == TransactionType.INCOME,
+        func.extract('month', Transaction.date) == month,
+        func.extract('year', Transaction.date) == year
+    ).scalar()
+
+    total_income = Decimal(str(total_income or 0))
+    total_expenses = Decimal(str(total_expenses or 0))
+    balance = total_income - total_expenses
     
-    return total or 0.0 
+    return balance

@@ -39,7 +39,7 @@ def read_transactions(
     )
     return transactions
 
-@router.post("/transactions", response_model=Transaction)
+@router.post("/transaction", response_model=Transaction)
 def create_transaction_endpoint(
     transaction: TransactionCreate,
     current_user = Depends(get_current_active_user),
@@ -50,7 +50,7 @@ def create_transaction_endpoint(
     except ValueError as e:
         raise ValidationError(str(e))
 
-@router.get("/transactions/{transaction_id}", response_model=Transaction)
+@router.get("/transaction/{transaction_id}", response_model=Transaction)
 def read_transaction(
     transaction_id: int,
     current_user = Depends(get_current_active_user),
@@ -61,7 +61,7 @@ def read_transaction(
         raise NotFoundError("Transaction not found")
     return transaction
 
-@router.put("/transactions/{transaction_id}", response_model=Transaction)
+@router.put("/transaction/{transaction_id}", response_model=Transaction)
 def update_transaction_endpoint(
     transaction_id: int,
     transaction_update: TransactionUpdate,
@@ -75,7 +75,7 @@ def update_transaction_endpoint(
         raise HTTPException(status_code=404, detail="Transaction not found")
     return transaction
 
-@router.delete("/transactions/{transaction_id}")
+@router.delete("/transaction/{transaction_id}")
 def delete_transaction_endpoint(
     transaction_id: int,
     current_user = Depends(get_current_active_user),
@@ -86,7 +86,7 @@ def delete_transaction_endpoint(
         raise HTTPException(status_code=404, detail="Transaction not found")
     return {"message": "Transaction deleted successfully"}
 
-@router.get("/transactions/summary/monthly", response_model=TransactionSummary)
+@router.get("/transaction/summary/monthly", response_model=TransactionSummary)
 def get_monthly_summary(
     month: int = Query(..., ge=1, le=12),
     year: int = Query(..., ge=2020),
@@ -95,17 +95,14 @@ def get_monthly_summary(
 ):
     from app.core.cache import cache
     
-    # Try to get from cache first
     cache_key = f"summary:{current_user.user_id}:{year}:{month}"
     cached_summary = cache.get(cache_key)
     
     if cached_summary:
         return TransactionSummary(**cached_summary)
     
-    # Get from database
     summary = get_transaction_summary(db=db, user_id=current_user.user_id, month=month, year=year)
     
-    # Cache for 5 minutes
     cache.set(cache_key, summary, expire=300)
     
     return TransactionSummary(**summary) 

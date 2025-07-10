@@ -36,4 +36,6 @@ def get_current_user(
 def get_current_active_user(current_user = Depends(get_current_user)):
     if current_user.is_active != 1:
         raise HTTPException(status_code=400, detail="Inactive user")
+    if current_user.is_verified != 1 and current_user.role != "admin":
+        raise HTTPException(status_code=400, detail="Unverified user")
     return current_user 

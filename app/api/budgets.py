@@ -21,7 +21,7 @@ def read_budget_categories(
     categories = get_budget_categories(db, user_id=current_user.user_id, skip=skip, limit=limit)
     return categories
 
-@router.post("/budget-categories", response_model=BudgetCategory)
+@router.post("/budget-category", response_model=BudgetCategory)
 def create_budget_category_endpoint(
     category: BudgetCategoryCreate,
     current_user = Depends(get_current_active_user),
@@ -29,7 +29,7 @@ def create_budget_category_endpoint(
 ):
     return create_budget_category(db=db, category=category, user_id=current_user.user_id)
 
-@router.get("/budget-categories/{category_id}", response_model=BudgetCategory)
+@router.get("/budget-category/{category_id}", response_model=BudgetCategory)
 def read_budget_category(
     category_id: int,
     current_user = Depends(get_current_active_user),
@@ -40,7 +40,7 @@ def read_budget_category(
         raise HTTPException(status_code=404, detail="Budget category not found")
     return category
 
-@router.put("/budget-categories/{category_id}", response_model=BudgetCategory)
+@router.put("/budget-category/{category_id}", response_model=BudgetCategory)
 def update_budget_category_endpoint(
     category_id: int,
     category_update: BudgetCategoryUpdate,
@@ -54,7 +54,7 @@ def update_budget_category_endpoint(
         raise HTTPException(status_code=404, detail="Budget category not found")
     return category
 
-@router.delete("/budget-categories/{category_id}")
+@router.delete("/budget-category/{category_id}")
 def delete_budget_category_endpoint(
     category_id: int,
     current_user = Depends(get_current_active_user),
@@ -65,7 +65,7 @@ def delete_budget_category_endpoint(
         raise HTTPException(status_code=404, detail="Budget category not found")
     return {"message": "Budget category deleted successfully"}
 
-@router.get("/budget-categories/{category_id}/usage")
+@router.get("/budget-category/{category_id}/usage")
 def get_budget_category_usage(
     category_id: int,
     month: int = Query(..., ge=1, le=12),
@@ -73,7 +73,6 @@ def get_budget_category_usage(
     current_user = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
-    # Check if category exists and belongs to user
     category = get_budget_category(db, category_id=category_id, user_id=current_user.user_id)
     if category is None:
         raise HTTPException(status_code=404, detail="Budget category not found")
