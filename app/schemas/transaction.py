@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, validator, Field, condecimal
 from typing import Optional
 from datetime import datetime, date
 from decimal import Decimal, ROUND_HALF_UP
@@ -6,7 +6,7 @@ from app.models.transaction import TransactionType
 
 class TransactionBase(BaseModel):
     type: TransactionType
-    amount: Decimal = Field(..., ge=Decimal('0.01'), decimal_places=2)
+    amount: Decimal = condecimal(ge=Decimal('0.01'), decimal_places=2)
     description: str = Field(..., min_length=1, max_length=500)
     date: datetime = Field(..., description="Transaction date and time")
     category_id: Optional[int] = Field(None, gt=0)
@@ -36,7 +36,7 @@ class TransactionCreate(TransactionBase):
 
 class TransactionUpdate(BaseModel):
     type: Optional[TransactionType] = None
-    amount: Optional[Decimal] = Field(None, ge=Decimal('0.01'), decimal_places=2)
+    amount: Optional[Decimal] = condecimal(ge=Decimal('0.01'), decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=500)
     date: Optional[datetime] = None
     category_id: Optional[int] = Field(None, gt=0)
@@ -74,8 +74,8 @@ class Transaction(TransactionInDB):
     pass
 
 class TransactionSummary(BaseModel):
-    total_income: Decimal = Field(..., decimal_places=2)
-    total_expenses: Decimal = Field(..., decimal_places=2)
-    balance: Decimal = Field(..., decimal_places=2)
+    total_income: Decimal = condecimal(ge=Decimal('0.01'), decimal_places=2)
+    total_expenses: Decimal = condecimal(ge=Decimal('0.01'), decimal_places=2)
+    balance: Decimal = condecimal(ge=Decimal('0.01'), decimal_places=2)
     month: int
     year: int 

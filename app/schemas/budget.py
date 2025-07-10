@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, validator, Field, condecimal
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
@@ -6,7 +6,7 @@ from decimal import Decimal, ROUND_HALF_UP
 class BudgetCategoryBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
-    monthly_limit: Decimal = Field(..., ge=Decimal('0.01'), decimal_places=2)
+    monthly_limit: Decimal = condecimal(ge=Decimal('0.01'), decimal_places=2)
 
     @validator('monthly_limit')
     def validate_limit(cls, v):
@@ -26,7 +26,7 @@ class BudgetCategoryCreate(BudgetCategoryBase):
 class BudgetCategoryUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
-    monthly_limit: Optional[Decimal] = Field(None, ge=Decimal('0.01'), decimal_places=2)
+    monthly_limit: Optional[Decimal] = condecimal(ge=Decimal('0.01'), decimal_places=2)
     is_active: Optional[int] = None
 
     @validator('monthly_limit')
