@@ -16,21 +16,13 @@ API untuk manajemen keuangan pribadi menggunakan FastAPI.
 ## Instalasi
 
 1. Clone repository ini
-2. Buat virtual environment:
-   ```bash
-   python -m venv kedata
-   ```
 
-3. Aktifkan virtual environment:
-   - Windows: `kedata\Scripts\activate`
-   - Linux/Mac: `source kedata/bin/activate`
-
-4. Install dependencies:
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-5. Buat file `.env` dengan konfigurasi:
+3. Buat file `.env` dengan konfigurasi:
    ```env
    DATABASE_URL=postgresql://user:password@localhost:5432/finance_db
    REDIS_URL=redis://localhost:6379/0
@@ -39,7 +31,7 @@ API untuk manajemen keuangan pribadi menggunakan FastAPI.
    DEBUG=true
    ```
 
-6. Setup database:
+4. Setup database:
    ```bash
    # Buat database PostgreSQL
    createdb finance_db
@@ -65,7 +57,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ### Inisialisasi Database
 Script `python -m app.core.init_db` akan:
 - Membuat tabel `user` untuk menyimpan data pengguna
-- Membuat tabel `budget_category` untuk kategori budget
+- Membuat tabel `category` untuk kategori budget
 - Membuat tabel `transaction` untuk transaksi keuangan
 - Menggunakan `checkfirst=True` untuk mencegah error jika tabel sudah ada
 
@@ -73,33 +65,36 @@ Script `python -m app.core.init_db` akan:
 
 #### Tabel User
 - `user_id` - Primary key
+- `role` - Role pengguna (default: "personal")
 - `email` - Email pengguna (unique)
 - `username` - Username (unique)
 - `hashed_password` - Password yang di-hash
 - `full_name` - Nama lengkap
 - `is_active` - Status aktif (1=aktif, 0=nonaktif)
-- `is_verified` - Status verifikasi email
+- `is_verified` - Status verifikasi email (1=terverifikasi, 0=belum)
+- `token_reset_password` - Token untuk reset password
 - `created_at` - Waktu pembuatan
 - `updated_at` - Waktu update terakhir
 - `deleted_at` - Soft delete timestamp
 
-#### Tabel BudgetCategory
+#### Tabel Category
 - `category_id` - Primary key
 - `user_id` - Foreign key ke user
-- `name` - Nama kategori
-- `description` - Deskripsi kategori
-- `budget_limit` - Limit budget
+- `name` - Nama kategori (max 100 karakter)
+- `description` - Deskripsi kategori (max 500 karakter)
+- `monthly_limit` - Limit budget bulanan (decimal 10,2)
+- `is_active` - Status aktif (1=aktif, 0=nonaktif)
 - `created_at` - Waktu pembuatan
 - `updated_at` - Waktu update terakhir
 
 #### Tabel Transaction
 - `transaction_id` - Primary key
 - `user_id` - Foreign key ke user
-- `category_id` - Foreign key ke budget_category
-- `amount` - Jumlah transaksi
-- `description` - Deskripsi transaksi
-- `transaction_type` - Tipe transaksi (income/expense)
-- `transaction_date` - Tanggal transaksi
+- `category_id` - Foreign key ke category (nullable)
+- `type` - Tipe transaksi (income/expense)
+- `amount` - Jumlah transaksi (decimal 10,2)
+- `description` - Deskripsi transaksi (max 500 karakter)
+- `date` - Tanggal transaksi
 - `created_at` - Waktu pembuatan
 - `updated_at` - Waktu update terakhir
 
@@ -160,17 +155,6 @@ app/
 ### Running Tests
 ```bash
 pytest
-```
-
-### Code Formatting
-```bash
-black app/
-isort app/
-```
-
-### Linting
-```bash
-flake8 app/
 ```
 
 ## Troubleshooting
